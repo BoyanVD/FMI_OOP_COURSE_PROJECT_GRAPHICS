@@ -5,12 +5,12 @@
 #include "PPM.h"
 #include <fstream>
 
-void PPM::open(const std::string& path) 
+void PPM::open() 
 {
-    std::ifstream file(path);
+    std::ifstream file(this->filename);
     if (!file)
     {
-        std::cout << "Problem while opening file " << path << " !" << std::endl; 
+        std::cout << "Problem while opening file " << this->filename << " !" << std::endl; 
         return;
     }
 
@@ -31,23 +31,26 @@ void PPM::open(const std::string& path)
     file >> heightString;
     this->height = std::stoi(heightString);
     file >> rangeString;
-    this->pixelsTable.clear();
+    this->colorRange = std::stoi(rangeString);
 
-    RGB pixel;
+    this->pixels.clear();
+
     std::string red;
     std::string green;
     std::string blue;
 
     for (unsigned int i = 0; i < width * height; i++) 
     {
-        file >> red;
-        pixel.red = std::stoi(red);
-        file >> green;
-        pixel.green = std::stoi(green);
-        file >> blue;
-        pixel.blue = std::stoi(blue);
+        PixelPPM* pixel = new PixelPPM();
 
-        this->pixelsTable.push_back(pixel);
+        file >> red;
+        pixel->red = std::stoi(red);
+        file >> green;
+        pixel->green = std::stoi(green);
+        file >> blue;
+        pixel->blue = std::stoi(blue);
+
+        this->pixels.push_back(pixel);
     }
 
     file.close();
