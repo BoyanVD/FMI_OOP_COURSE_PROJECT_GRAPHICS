@@ -13,7 +13,7 @@
 // Find the file type from the signature. Must implement constructor only by field filename for Image File.
 ImageFile* ImageFileFactory::generate(const std::string& filepath)
 {
-    std::ifstream file(filepath);
+    std::ifstream file(filepath, std::ios::binary);
     if (!file)
     {
         std::cout << "Problem while opening file " << filepath << " !" << std::endl; 
@@ -22,16 +22,24 @@ ImageFile* ImageFileFactory::generate(const std::string& filepath)
 
     std::string magicNumber;
     file >> magicNumber;
+    // std::cout << magicNumber << "----------------------------" << std::endl;
 
     file.close();
 
-    ImageFile* item;
-    if (magicNumber == PPM_FILE_SIGNATURE)
-        item = new PPM(filepath);
-    else if (magicNumber == PGM_FILE_SIGNATURE)
-        item = new PGM(filepath);
-    else if (magicNumber == PBM_FILE_SIGNATURE)
-        item = new PBM(filepath);
+    ImageFile* item = nullptr;
+
+    if (magicNumber == PPM_FILE_SIGNATURE_TEXT)
+        item = new PPM(filepath, "text");
+    else if (magicNumber == PPM_FILE_SIGNATURE_BINARY)
+        item = new PPM(filepath, "binary");
+    if (magicNumber == PGM_FILE_SIGNATURE_TEXT)
+        item = new PGM(filepath, "text");
+    else if (magicNumber == PGM_FILE_SIGNATURE_BINARY)
+        item = new PGM(filepath, "binary");
+    if (magicNumber == PBM_FILE_SIGNATURE_TEXT)
+        item = new PBM(filepath, "text");
+    else if (magicNumber == PBM_FILE_SIGNATURE_BINARY)
+        item = new PBM(filepath, "binary");
     
     return item;
 }

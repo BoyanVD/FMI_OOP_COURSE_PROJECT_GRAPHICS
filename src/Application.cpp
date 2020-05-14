@@ -65,8 +65,10 @@ void Application::load(const Command& command)
 
 void Application::run()
 {
-    std::string input = "load ./files/6colour_ppma.ppm";
+    // std::string input = "load ./files/6colour_ppma.ppm ./files/Aerial.512.ppm";
+    std::string input = "load ./files/apollonian_gasket.ascii.pgm";
     Command command(input);
+    // command.print();
     load(input);
     printSessions();
 }

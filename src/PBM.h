@@ -16,9 +16,12 @@ struct PixelPBM : public Pixel
 
 class PBM : public ImageFile
 {
+private:
+    bool openTextType();
+    bool openBinaryType();
 public:
-    PBM() : ImageFile("") {};
-    PBM(const std::string& _filepath) : ImageFile(_filepath) {};
+    PBM() : ImageFile("", "") {};
+    PBM(const std::string& _filepath, const std::string& _type) : ImageFile(_filepath, _type) {};
 
     void open();
 

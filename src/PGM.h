@@ -18,9 +18,12 @@ class PGM : public ImageFile
 {
 private:
     unsigned int colorRange;
+
+    bool openTextType();
+    bool openBinaryType();
 public:
-    PGM() : ImageFile(""), colorRange(255) {};
-    PGM(const std::string& _filepath) : ImageFile(_filepath), colorRange(255) {};
+    PGM() : ImageFile("", ""), colorRange(255) {};
+    PGM(const std::string& _filepath, const std::string& _type) : ImageFile(_filepath, _type), colorRange(255) {};
 
     void open();
 

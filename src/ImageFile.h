@@ -14,12 +14,13 @@ class ImageFile
 {
 protected:
     std::string filename;
+    std::string type; // consider enum type
     std::vector<Pixel*> pixels;
     unsigned int width;
     unsigned int height;
 
 public:
-    ImageFile(std::string _filename) : filename(_filename), width(0), height(0) {};
+    ImageFile(const std::string& _filename, const std::string& _type) : filename(_filename), type(_type), width(0), height(0) {};
 
     virtual void open() = 0;
 
