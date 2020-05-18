@@ -12,6 +12,16 @@ struct PixelPGM : public Pixel
     unsigned char greyscale;
 
     PixelPGM() : greyscale(0) {};
+
+    virtual Pixel* clone() const
+    {
+        return new PixelPGM(*this);
+    }
+
+    bool isMonochrome(unsigned int colorRange)
+    {
+        return ((greyscale == 0) || (greyscale == colorRange));
+    }
 };
 
 class PGM : public ImageFile
@@ -21,31 +31,21 @@ private:
 
     bool openTextType();
     bool openBinaryType();
+
+    bool writeBinary();
+    bool writeText();
+
+    bool isMonochrome() const;
 public:
     PGM() : ImageFile("", ""), colorRange(255) {};
     PGM(const std::string& _filepath, const std::string& _type) : ImageFile(_filepath, _type), colorRange(255) {};
 
-    void open();
-
-    void print()
-    {
-        unsigned int size = width * width;
-
-        std::cout << "File size : " << size << std::endl;
-        std::cout << "Width : " << width << std::endl;
-        std::cout << "Height : " << height << std::endl;
-        std::cout << "Color range : " << colorRange << std::endl;
-
-        for (unsigned int j = 0; j < height; ++j) 
-        {
-            for (unsigned int i = 0; i < width; ++i) 
-            {
-                PixelPGM* pixel = dynamic_cast<PixelPGM*>(getPixel(i, j));
-                std::cout << (int)pixel->greyscale << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
+    void open() override;
+    void write() override;
+    void grayscale() override {}
+    void print() override;
+    void monochrome() override;
+    void negative() override;
 };
 
 #endif

@@ -12,6 +12,11 @@ struct PixelPBM : public Pixel
     unsigned char isBlack; // using unsigned char instead of bool for less memory
 
     PixelPBM() : isBlack(0) {};
+
+    virtual Pixel* clone() const
+    {
+        return new PixelPBM(*this);
+    }
 };
 
 class PBM : public ImageFile
@@ -19,30 +24,19 @@ class PBM : public ImageFile
 private:
     bool openTextType();
     bool openBinaryType();
+
+    bool writeBinary();
+    bool writeText();
 public:
     PBM() : ImageFile("", "") {};
     PBM(const std::string& _filepath, const std::string& _type) : ImageFile(_filepath, _type) {};
 
-    void open();
-
-    void print()
-    {
-        unsigned int size = width * width;
-
-        std::cout << "File size : " << size << std::endl;
-        std::cout << "Width : " << width << std::endl;
-        std::cout << "Height : " << height << std::endl;
-
-        for (unsigned int j = 0; j < height; ++j) 
-        {
-            for (unsigned int i = 0; i < width; ++i) 
-            {
-                PixelPBM* pixel = dynamic_cast<PixelPBM*>(getPixel(i, j));
-                std::cout << (int)pixel->isBlack << " " ;
-            }
-            std::cout << std::endl;
-        }
-    }
+    void open() override;
+    void write() override;
+    void grayscale() override {}
+    void print() override;
+    void monochrome() override {}
+    void negative() override;
 };
 
 #endif

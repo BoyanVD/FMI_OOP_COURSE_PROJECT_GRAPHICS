@@ -14,6 +14,21 @@ struct PixelPPM : public Pixel
     unsigned char blue;
 
     PixelPPM() : red(0), green(0), blue(0) {};
+
+    virtual Pixel* clone() const
+    {
+        return new PixelPPM(*this);
+    }
+
+    bool isGray() const
+    {
+        return ((red == green) && (green == blue));
+    }
+
+    bool isMonochrome(unsigned int colorRange) const
+    {
+        return (red == 0 && green == 0 && blue == 0) || (red == colorRange && green == colorRange && blue == colorRange);
+    }
 };
 
 class PPM : public ImageFile
@@ -23,30 +38,24 @@ private:
 
     bool openTextType();
     bool openBinaryType();
+
+    bool writeBinary();
+    bool writeText();
+
+    bool isGrayscale() const;
+    bool isMonochrome() const;
+
+    // float meanGreyscaleValue() const;
 public:
     PPM() : ImageFile("", ""), colorRange(255) {};
     PPM(const std::string& _filepath, const std::string& _type) : ImageFile(_filepath, _type), colorRange(255) {};
 
     void open() override;
-
-    void print() override
-    {
-        unsigned int size = width * width;
-
-        std::cout << "File size : " << size << std::endl;
-        std::cout << "Width : " << width << std::endl;
-        std::cout << "Height : " << height << std::endl;
-        std::cout << "Color range : " << colorRange << std::endl;
-
-        for (unsigned int j = 0; j < height; ++j) 
-        {
-            for (unsigned int i = 0; i < width; ++i) 
-            {
-                PixelPPM* pixel = dynamic_cast<PixelPPM*>(getPixel(i, j));
-                std::cout << (int)pixel->red << " " << (int)pixel->green << " " << (int)pixel->blue << std::endl;
-            }
-        }
-    }
+    void write() override;
+    void grayscale() override;
+    void print() override;
+    void monochrome() override;
+    void negative() override;
 };
 
 #endif

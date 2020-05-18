@@ -15,4 +15,8 @@ const std::string PBM_FILE_SIGNATURE_BINARY = "P4";
 const std::string INPUT_COMMAND_DELIMETER = " ";
 const unsigned INITIAL_SESSION_ID = 1;
 
+const float GRAYSCALE_RED_COEFF = 0.299f;
+const float GRAYSCALE_GREEN_COEFF = 0.587f;
+const float GRAYSCALE_BLUE_COEFF = 0.114f;
+
 #endif
