@@ -7,6 +7,29 @@
 
 #include <algorithm>
 
+const std::map<std::string, Application::Function> Application::SUPPORTED_FUNCTIONS = {
+    {"load", &Application::load},
+    {"add", &Application::addImage},
+    {"session_info", &Application::sessionInfo},
+    {"switch", &Application::switchSession},
+    {"collage", &Application::collage},
+    {"image_transformation", &Application::imageTransformation},
+    {"save", &Application::save},
+    {"saveas", &Application::saveas},
+    {"undo", &Application::undo}
+};
+
+Application::Function Application::getFunction(const std::string key)
+{
+    std::map<std::string, Application::Function>::const_iterator it = SUPPORTED_FUNCTIONS.find(key);
+    if (it == SUPPORTED_FUNCTIONS.end())
+    {
+        return SUPPORTED_FUNCTIONS.find("image_transformation")->second; // image transformations validation is in ImageFile
+    }
+
+    return it->second;
+}
+
 unsigned Application::generateUniqueId()
 {
     sort(this->sessions.begin(), this->sessions.end());
@@ -24,15 +47,6 @@ void Application::printSessions()
 {
     std::cout << "Current session : " << currentSession->getId() << std::endl;
     std::cout << "Session commands : " << std::endl;
-    // for (Command command : currentSession->getSessionCommands())
-    // {
-    //     command.print();
-    // }
-
-    // for (ImageFile* item : currentSession->getSessionItems())
-    // {
-    //     item->print();
-    // }
 }
 
 void Application::load(const Command& command)
@@ -61,7 +75,6 @@ void Application::load(const Command& command)
         item->open();
         session->addItem(item);
     }
-    // session->addCommand(command);
 
     this->sessions.push_back(session);
     this->currentSession = session;
@@ -104,7 +117,26 @@ void Application::imageTransformation(const Command& command)
         return;
     }
 
+    // std::cout << command.getCommand() << std::endl;
     currentSession->addTransformation(command);
+}
+
+void Application::undo(const Command& command)
+{
+    if (this->currentSession == nullptr)
+    {
+        std::cout << "There is currently no active session !" << std::endl;
+        return;
+    }
+
+    size_t numberOfParameters = command.getNumberOfParameters();
+    if (numberOfParameters != 0)
+    {
+        std::cout << "Undo command doesnt require parameters !" << std::endl;
+        return;
+    }
+
+    this->currentSession->undo();
 }
 
 void Application::sessionInfo(const Command& command)
@@ -160,6 +192,7 @@ void Application::switchSession(const Command& command)
     std::cout << "No session with ID : " << id << std::endl;
 }
 
+// @TODO Session must contain the images to collage
 void Application::collage(const Command& command)
 {
     if (this->currentSession == nullptr)
@@ -175,7 +208,15 @@ void Application::collage(const Command& command)
         return;
     }
 
-    ImageFile* image = ImageFile::collage(command.getParameter(0), command.getParameter(1), command.getParameter(2), command.getParameter(3));
+    std::string image1 = command.getParameter(1);
+    std::string image2 = command.getParameter(2);
+    if (!(this->currentSession->contains(image1) && this->currentSession->contains(image2)))
+    {
+        std::cout << "Images not loaded in current session !" << std::endl;
+        return;
+    }
+
+    ImageFile* image = ImageFile::collage(command.getParameter(0), image1, image2, command.getParameter(3));
     image->write();
 }
 
@@ -194,6 +235,7 @@ void Application::save(const Command& command)
         return;
     }
 
+    this->currentSession->executeAllTransformations();
     this->currentSession->save();
 }
 
@@ -212,16 +254,27 @@ void Application::saveas(const Command& command)
         return;
     }
 
-    this->currentSession->changeFirstItemName(command.getParameter(0));
-    this->currentSession->save();
+    // this->currentSession->changeFirstItemName(command.getParameter(0));
+    this->currentSession->executeAllTransformations();
+    this->currentSession->saveas(command.getParameter(0));
 }
 
 void Application::run()
 {
-    std::string input = "load ./files/apollonian_gasket.ascii.pgm";
-    Command command(input);
-    load(input);
-    printSessions();
+    std::string input;
+    do
+    {
+        std::cout << ">";
+        getline(std::cin, input);
+        
+        Command command(input);
+        Application::Function function = this->getFunction(command.getCommand());
+
+        (this->*function)(command);
+
+    } while (input != "exit");
+    
+    std::cout << "Thank you for using the system !" << std::endl;
 }
 
 #endif

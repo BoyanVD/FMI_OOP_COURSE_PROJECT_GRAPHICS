@@ -162,4 +162,7 @@ int main()
     // // image->setFilename("./files/Aerial_NEGATIVE_WAY_MONOCHROME.ppm");
     // // image->write();
     //------------------------------------------------------------------------------DEMO_13------------------------------------------
+
+    Application app;
+    app.run();
 }

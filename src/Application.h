@@ -15,10 +15,15 @@
 class Application
 {
 private:
+    typedef void (Application::*Function)(const Command&);
+    static const std::map<std::string, Function> SUPPORTED_FUNCTIONS;
+
     std::vector<Session*> sessions;
     Session* currentSession; // points to one of sessions items
 
     unsigned generateUniqueId();
+
+    Function getFunction(const std::string key);
 
     void load(const Command& command);
     void addImage(const Command& command);
@@ -30,6 +35,7 @@ private:
 
     void save(const Command& command);
     void saveas(const Command& command);
+    void undo(const Command& command);
 
     // void grayscale();
     // void monochrome();
