@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <map>
 
 struct Pixel 
 {
@@ -11,15 +12,23 @@ struct Pixel
     virtual Pixel* clone() const = 0;
 };
 
+// using ImageFileTransformation = void (ImageFile::*)();
+// typedef void (ImageFile::*Transformation)();
+
 class ImageFile
 {
 protected:
+    // typedef void (ImageFile::*Transformation)();
+    typedef void (ImageFile::*Transformation)();
+    static const std::map<std::string, Transformation> TRANSFORMATIONS;
+
     std::string filename;
     std::string type; // consider enum type
     std::vector<Pixel*> pixels;
     unsigned int width;
     unsigned int height;
 
+    void setPixels(const std::vector<Pixel*>& _pixels);
 public:
     ImageFile(const std::string& _filename, const std::string& _type) : filename(_filename), type(_type), width(0), height(0) {};
 
@@ -28,6 +37,13 @@ public:
     virtual void grayscale() = 0;
     virtual void monochrome() = 0;
     virtual void negative() = 0;
+
+    void executeTransformation(const std::string& transformation);
+
+    virtual std::string getType() const = 0;
+    virtual ImageFile* clone() const = 0;
+
+    static ImageFile* collage(std::string direction, std::string image1Filename, std::string image2Filename, std::string outimageFilename);
 
     Pixel* getPixel(unsigned int i, unsigned int j)
     {
@@ -53,6 +69,11 @@ public:
     void setFilename(std::string newFilename)
     {
         this->filename = newFilename;
+    }
+
+    std::string getFilename()
+    {
+        return this->filename;
     }
 
     virtual void print() 

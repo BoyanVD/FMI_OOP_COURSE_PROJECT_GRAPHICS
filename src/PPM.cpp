@@ -207,20 +207,6 @@ bool PPM::isGrayscale() const
     return true;
 }
 
-// float PPM::meanGreyscaleValue() const
-// {
-//     float greyscaleSum = 0.0f;
-//     for (Pixel* pixel : this->pixels)
-//     {
-//         PixelPPM* pixelPPM = dynamic_cast<PixelPPM*>(pixel);
-
-//         float greyscaleValue = (pixelPPM->red * GRAYSCALE_RED_COEFF) + (pixelPPM->green * GRAYSCALE_GREEN_COEFF) + (pixelPPM->blue * GRAYSCALE_BLUE_COEFF);
-//         greyscaleSum += greyscaleValue; 
-//     }
-
-//     return (greyscaleSum / this->pixels.size());
-// }
-
 void PPM::grayscale()
 {
     if (this->isGrayscale())
@@ -269,6 +255,11 @@ void PPM::negative()
         pixelPPM->green = (this->colorRange - pixelPPM->green);
         pixelPPM->blue = (this->colorRange - pixelPPM->blue);
     }
+}
+
+std::string PPM::getType() const
+{
+    return "PPM";
 }
 
 #endif

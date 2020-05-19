@@ -192,4 +192,9 @@ void PBM::negative()
     }
 }
 
+std::string PBM::getType() const
+{
+    return "PBM";
+}
+
 #endif

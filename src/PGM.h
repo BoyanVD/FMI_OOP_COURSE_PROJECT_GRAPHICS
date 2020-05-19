@@ -46,6 +46,12 @@ public:
     void print() override;
     void monochrome() override;
     void negative() override;
+    std::string getType() const override;
+
+    virtual ImageFile* clone() const
+    {
+        return new PGM(*this);
+    }
 };
 
 #endif

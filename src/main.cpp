@@ -1,9 +1,11 @@
 #include <iostream>
+#include <stdexcept>
 
 #include "Application.h"
 #include "PPM.h"
 #include "Command.h"
 #include "ImageFileFactory.h"
+#include "ImageFile.h"
 
 int main()
 {
@@ -127,18 +129,37 @@ int main()
     //------------------------------------------------------------------------------DEMO_9------------------------------------------
 
     //------------------------------------------------------------------------------DEMO_10------------------------------------------
-    ImageFile* img = ImageFileFactory::generate("./files/marbles.ppm");
-    img->open();
-    img->rotate("right");
+    // ImageFile* img = ImageFileFactory::generate("./files/marbles.ppm");
+    // img->open();
+    // img->rotate("right");
 
-    img->setFilename("./files/marbles_ROTATE_RIGTH.ppm");
-    img->write();
+    // img->setFilename("./files/marbles_ROTATE_RIGTH.ppm");
+    // img->write();
 
-    ImageFile* img1 = ImageFileFactory::generate("./files/marbles.ppm");
-    img1->open();
-    img1->rotate("left");
+    // ImageFile* img1 = ImageFileFactory::generate("./files/marbles.ppm");
+    // img1->open();
+    // img1->rotate("left");
 
-    img1->setFilename("./files/marbles_ROTATE_LEFT.ppm");
-    img1->write();
+    // img1->setFilename("./files/marbles_ROTATE_LEFT.ppm");
+    // img1->write();
     //------------------------------------------------------------------------------DEMO_10------------------------------------------
+
+    //------------------------------------------------------------------------------DEMO_11------------------------------------------
+    // ImageFile* image = ImageFile::collage("horizontal", "./files/Aerial.512.ppm", "./files/Aerial.512.ppm", "./files/Aerial_COLLAGE.ppm");
+    // image->write();
+    //------------------------------------------------------------------------------DEMO_11------------------------------------------
+
+    //------------------------------------------------------------------------------DEMO_12------------------------------------------
+    // ImageFile* image = ImageFile::collage("vertical", "./files/Aerial.512.ppm", "./files/Aerial.512.ppm", "./files/Aerial_COLLAGE_VERTICAL.ppm");
+    // image->write();
+    //------------------------------------------------------------------------------DEMO_12------------------------------------------
+
+    //------------------------------------------------------------------------------DEMO_13------------------------------------------
+    // ImageFile* image = ImageFileFactory::generate("./files/Aerial.512.ppm");
+    // image->open();
+    // image->executeTransformation("shit");
+
+    // // image->setFilename("./files/Aerial_NEGATIVE_WAY_MONOCHROME.ppm");
+    // // image->write();
+    //------------------------------------------------------------------------------DEMO_13------------------------------------------
 }

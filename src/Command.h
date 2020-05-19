@@ -37,10 +37,10 @@ public:
 
     void print()
     {
-        std::cout << "Command name : " << command << std::endl;
+        std::cout << "  Command name : " << command << std::endl;
         for (std::string param : parameters)
         {
-            std::cout << "Parameter : " << param << std::endl;
+            std::cout << "  Parameter : " << param << std::endl;
         }
     }
 };

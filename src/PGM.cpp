@@ -210,4 +210,9 @@ void PGM::negative()
     }
 }
 
+std::string PGM::getType() const
+{
+    return "PGM";
+}
+
 #endif
