@@ -10,7 +10,8 @@
 #include "Command.h"
 
 /*
-* Works with ASCII file format
+* Important:
+*   - The Application works with Netpbm files, that don't have comment lines
 */
 class Application
 {

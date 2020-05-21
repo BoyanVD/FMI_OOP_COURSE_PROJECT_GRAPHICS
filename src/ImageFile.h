@@ -37,6 +37,9 @@ public:
     virtual void grayscale() = 0;
     virtual void monochrome() = 0;
     virtual void negative() = 0;
+    virtual void redscale() = 0;
+    virtual void greenscale() = 0;
+    virtual void bluescale() = 0;
 
     void executeTransformation(const std::string& transformation);
 

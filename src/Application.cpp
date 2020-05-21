@@ -223,8 +223,15 @@ void Application::collage(const Command& command)
         return;
     }
 
-    ImageFile* image = ImageFile::collage(command.getParameter(0), image1, image2, command.getParameter(3));
-    image->write();
+    try
+    {
+        ImageFile* image = ImageFile::collage(command.getParameter(0), image1, image2, command.getParameter(3));
+        image->write();
+        
+    } catch (std::invalid_argument ia)
+    {
+        this->logStream << ia.what() << std::endl;
+    }
 }
 
 void Application::save(const Command& command)
@@ -267,10 +274,14 @@ void Application::saveas(const Command& command)
 
 void Application::run()
 {
+    this->logStream << "Welcome to Netbpm image files management system !" << std::endl;
+    this->logStream << "Important note : the application works with files, that doesn't contain comment line ! If your files contain such line, please remove them !" << std::endl;
+    this->logStream << std::endl;
+
     std::string input;
     do
     {
-        std::cout << ">";
+        this->logStream << ">";
         getline(this->inputStream, input);
         
         Command command(input);

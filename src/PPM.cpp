@@ -257,6 +257,39 @@ void PPM::negative()
     }
 }
 
+void PPM::redscale()
+{
+    for (Pixel* pixel : this->pixels)
+    {
+        PixelPPM* pixelPPM = dynamic_cast<PixelPPM*>(pixel);
+
+        pixelPPM->green = 0;
+        pixelPPM->blue = 0;
+    }
+}
+
+void PPM::greenscale()
+{
+    for (Pixel* pixel : this->pixels)
+    {
+        PixelPPM* pixelPPM = dynamic_cast<PixelPPM*>(pixel);
+
+        pixelPPM->red = 0;
+        pixelPPM->blue = 0;
+    }
+}
+
+void PPM::bluescale()
+{
+    for (Pixel* pixel : this->pixels)
+    {
+        PixelPPM* pixelPPM = dynamic_cast<PixelPPM*>(pixel);
+
+        pixelPPM->green = 0;
+        pixelPPM->red = 0;
+    }
+}
+
 std::string PPM::getType() const
 {
     return "PPM";

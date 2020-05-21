@@ -8,7 +8,10 @@
 const std::map<std::string, ImageFile::Transformation> ImageFile::TRANSFORMATIONS = {
     {"grayscale", &ImageFile::grayscale},
     {"monochrome", &ImageFile::monochrome},
-    {"negative", &ImageFile::negative}
+    {"negative", &ImageFile::negative},
+    {"redscale", &ImageFile::redscale},
+    {"greenscale", &ImageFile::greenscale},
+    {"bluescale", &ImageFile::bluescale}
 };
 
 bool ImageFile::isThereSuchTransformation(std::string transformation)
@@ -23,16 +26,10 @@ ImageFile* ImageFile::collage(std::string direction, std::string image1Filename,
     ImageFile* image2 = ImageFileFactory::generate(image2Filename);
     if (image1 == nullptr || image2 == nullptr)
     {
-        // std::cout << "Invalid images !" << std::endl;
-        // return;
-
         throw std::invalid_argument("Invalid images !");
 
     } else if (image1->type != image2->type)
     {
-        // std::cout << "Images must be from the same type !" << std::endl;
-        // return;
-
         throw std::invalid_argument("Images must be from the same type !");
     }
 

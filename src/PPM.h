@@ -56,6 +56,10 @@ public:
     void print() override;
     void monochrome() override;
     void negative() override;
+    virtual void redscale() override;
+    virtual void greenscale() override;
+    virtual void bluescale() override;
+
     std::string getType() const override;
 
     virtual ImageFile* clone() const

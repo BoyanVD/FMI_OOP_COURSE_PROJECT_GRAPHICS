@@ -163,6 +163,27 @@ int main()
     // // image->write();
     //------------------------------------------------------------------------------DEMO_13------------------------------------------
 
+    // ImageFile* image = ImageFileFactory::generate("./files/Aerial.512.ppm");
+    // image->open();
+    // image->redscale();
+
+    // image->setFilename("./files/Aerial_RED.ppm");
+    // image->write();
+
+    // ImageFile* image1 = ImageFileFactory::generate("./files/Aerial.512.ppm");
+    // image1->open();
+    // image1->greenscale();
+
+    // image1->setFilename("./files/Aerial_GREEN.ppm");
+    // image1->write();
+
+    // ImageFile* image2 = ImageFileFactory::generate("./files/Aerial.512.ppm");
+    // image2->open();
+    // image2->bluescale();
+
+    // image2->setFilename("./files/Aerial_BLUE.ppm");
+    // image2->write();
+    
     Application app(std::cin, std::cout);
     app.run();
 }
