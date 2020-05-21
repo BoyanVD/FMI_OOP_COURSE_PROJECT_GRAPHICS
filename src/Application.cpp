@@ -24,7 +24,16 @@ Application::Function Application::getFunction(const std::string key)
     std::map<std::string, Application::Function>::const_iterator it = SUPPORTED_FUNCTIONS.find(key);
     if (it == SUPPORTED_FUNCTIONS.end())
     {
-        return SUPPORTED_FUNCTIONS.find("image_transformation")->second; // image transformations validation is in ImageFile
+        if (ImageFile::isThereSuchTransformation(key))
+        {
+            return SUPPORTED_FUNCTIONS.find("image_transformation")->second;
+        }else
+        {
+            if (key != "exit")
+                this->logStream << "Invalid command !" << std::endl;
+            return nullptr;
+        }
+        
     }
 
     return it->second;
@@ -45,15 +54,15 @@ unsigned Application::generateUniqueId()
 
 void Application::printSessions()
 {
-    std::cout << "Current session : " << currentSession->getId() << std::endl;
-    std::cout << "Session commands : " << std::endl;
+    this->logStream << "Current session : " << currentSession->getId() << std::endl;
+    this->logStream << "Session commands : " << std::endl;
 }
 
 void Application::load(const Command& command)
 {
     if (currentSession != nullptr)
     {
-        std::cout << "You already have session loaded ! If you want to start new one, please use 'switch' command." << std::endl;
+        this->logStream << "You already have session loaded ! If you want to start new one, please use 'switch' command." << std::endl;
         return;
     }
 
@@ -66,8 +75,8 @@ void Application::load(const Command& command)
         ImageFile* item = ImageFileFactory::generate(command.getParameter(index));
         if (item == nullptr)
         {
-            std::cout << "Invalid filepath for command : " << command.getCommand() << std::endl;
-            std::cout << "For filepath : " << (index + 1) << std::endl;
+            this->logStream << "Invalid filepath for command : " << command.getCommand() << std::endl;
+            this->logStream << "For filepath : " << (index + 1) << std::endl;
 
             continue;
         }
@@ -79,7 +88,7 @@ void Application::load(const Command& command)
     this->sessions.push_back(session);
     this->currentSession = session;
 
-    std::cout << "Session with ID: " << session->getId() << " started" << std::endl;
+    this->logStream << "Session with ID: " << session->getId() << " started" << std::endl;
 }
 
 void Application::addImage(const Command& command)
@@ -87,19 +96,19 @@ void Application::addImage(const Command& command)
     size_t numberOfParameters = command.getNumberOfParameters();
     if (numberOfParameters > 1)
     {
-        std::cout << "Add image command accepts only one parameter !" << std::endl;
+        this->logStream << "Add image command accepts only one parameter !" << std::endl;
         return;
     }
 
     if (currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
     ImageFile* item = ImageFileFactory::generate(command.getParameter(0));
     currentSession->addItem(item);
-    std::cout << "Image '" << item->getFilename() << "' added" << std::endl;
+    this->logStream << "Image '" << item->getFilename() << "' added" << std::endl;
 }
 
 void Application::imageTransformation(const Command& command)
@@ -107,17 +116,16 @@ void Application::imageTransformation(const Command& command)
     size_t numberOfParameters = command.getNumberOfParameters();
     if (numberOfParameters > 0)
     {
-        std::cout << "Transformation commands doesn not take arguments !" << std::endl;
+        this->logStream << "Transformation commands doesn not take arguments !" << std::endl;
         return;
     }
 
     if (currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
-    // std::cout << command.getCommand() << std::endl;
     currentSession->addTransformation(command);
 }
 
@@ -125,14 +133,14 @@ void Application::undo(const Command& command)
 {
     if (this->currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
     size_t numberOfParameters = command.getNumberOfParameters();
     if (numberOfParameters != 0)
     {
-        std::cout << "Undo command doesnt require parameters !" << std::endl;
+        this->logStream << "Undo command doesnt require parameters !" << std::endl;
         return;
     }
 
@@ -143,7 +151,7 @@ void Application::sessionInfo(const Command& command)
 {
     if (this->currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
@@ -156,13 +164,13 @@ void Application::switchSession(const Command& command)
     size_t numberOfParameters = command.getNumberOfParameters();
     if (numberOfParameters > 1)
     {
-        std::cout << "Add image command accepts only one parameter !" << std::endl;
+        this->logStream << "Add image command accepts only one parameter !" << std::endl;
         return;
     }
 
     if (this->currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
@@ -173,7 +181,7 @@ void Application::switchSession(const Command& command)
     }
     catch(const std::invalid_argument& ia)
     {
-        std::cout << "Invalid argument !" << std::endl;
+        this->logStream << "Invalid argument !" << std::endl;
         return;
     }
 
@@ -189,22 +197,21 @@ void Application::switchSession(const Command& command)
         }
     }
 
-    std::cout << "No session with ID : " << id << std::endl;
+    this->logStream << "No session with ID : " << id << std::endl;
 }
 
-// @TODO Session must contain the images to collage
 void Application::collage(const Command& command)
 {
     if (this->currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
     size_t numberOfParameters = command.getNumberOfParameters();
     if (numberOfParameters != 4)
     {
-        std::cout << "Collage command expects exactly 4 parameters !" << std::endl;
+        this->logStream << "Collage command expects exactly 4 parameters !" << std::endl;
         return;
     }
 
@@ -212,7 +219,7 @@ void Application::collage(const Command& command)
     std::string image2 = command.getParameter(2);
     if (!(this->currentSession->contains(image1) && this->currentSession->contains(image2)))
     {
-        std::cout << "Images not loaded in current session !" << std::endl;
+        this->logStream << "Images not loaded in current session !" << std::endl;
         return;
     }
 
@@ -224,14 +231,14 @@ void Application::save(const Command& command)
 {
     if (this->currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
     size_t numberOfParameters = command.getNumberOfParameters();
     if (numberOfParameters != 0)
     {
-        std::cout << "Save command doesnt require parameters !" << std::endl;
+        this->logStream << "Save command doesnt require parameters !" << std::endl;
         return;
     }
 
@@ -243,18 +250,17 @@ void Application::saveas(const Command& command)
 {
     if (this->currentSession == nullptr)
     {
-        std::cout << "There is currently no active session !" << std::endl;
+        this->logStream << "There is currently no active session !" << std::endl;
         return;
     }
 
     size_t numberOfParameters = command.getNumberOfParameters();
     if (numberOfParameters != 1)
     {
-        std::cout << "Saveas command requires exactly 1 parameter !" << std::endl;
+        this->logStream << "Saveas command requires exactly 1 parameter !" << std::endl;
         return;
     }
 
-    // this->currentSession->changeFirstItemName(command.getParameter(0));
     this->currentSession->executeAllTransformations();
     this->currentSession->saveas(command.getParameter(0));
 }
@@ -265,10 +271,12 @@ void Application::run()
     do
     {
         std::cout << ">";
-        getline(std::cin, input);
+        getline(this->inputStream, input);
         
         Command command(input);
         Application::Function function = this->getFunction(command.getCommand());
+        if (function == nullptr)
+            continue;
 
         (this->*function)(command);
 

@@ -18,6 +18,9 @@ private:
     typedef void (Application::*Function)(const Command&);
     static const std::map<std::string, Function> SUPPORTED_FUNCTIONS;
 
+    std::istream& inputStream;
+    std::ostream& logStream;
+
     std::vector<Session*> sessions;
     Session* currentSession; // points to one of sessions items
 
@@ -37,19 +40,20 @@ private:
     void saveas(const Command& command);
     void undo(const Command& command);
 
-    // void grayscale();
-    // void monochrome();
-    // void negative();
-    // void rotate(const Command& command);
-
-
-
-
     void printSessions();
 public:
-    Application() : currentSession(nullptr) {}
+    Application(std::istream& _inputStream, std::ostream& _logStream) : 
+    inputStream(_inputStream), logStream(_logStream), currentSession(nullptr) {}
 
     void run();
+
+    ~Application()
+    {
+        for (Session* session : this->sessions)
+        {
+            delete session;
+        }
+    }
 };
 
 #endif

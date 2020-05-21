@@ -20,6 +20,11 @@ private:
         SessionItem(const ImageFile* img, const std::vector<std::string>& transformations) :
         image(img->clone()), imageTransformations(transformations) {}
 
+        ~SessionItem()
+        {
+            delete image;
+        }
+
         void executeAll()
         {
             for (std::string transformation : imageTransformations)
@@ -146,6 +151,14 @@ public:
         }
 
         return false;
+    }
+
+    ~Session()
+    {
+        for(SessionItem* item : this->sessionItems)
+        {
+            delete item;
+        }
     }
 };
 

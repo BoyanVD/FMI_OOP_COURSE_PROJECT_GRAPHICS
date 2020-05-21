@@ -102,6 +102,8 @@ public:
         this->width = tmp;
     }
 
+    static bool isThereSuchTransformation(std::string transformation);
+
     virtual ~ImageFile()
     {
         for (Pixel* pixel : pixels)

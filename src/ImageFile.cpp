@@ -5,15 +5,17 @@
 #include "ImageFileFactory.h"
 #include <stdexcept>
 
-// virtual void grayscale() = 0;
-//     virtual void monochrome() = 0;
-//     virtual void negative() = 0;
-
 const std::map<std::string, ImageFile::Transformation> ImageFile::TRANSFORMATIONS = {
     {"grayscale", &ImageFile::grayscale},
     {"monochrome", &ImageFile::monochrome},
     {"negative", &ImageFile::negative}
 };
+
+bool ImageFile::isThereSuchTransformation(std::string transformation)
+{
+    std::map<std::string, ImageFile::Transformation>::const_iterator it = TRANSFORMATIONS.find(transformation);
+    return (it != TRANSFORMATIONS.end());
+}
 
 ImageFile* ImageFile::collage(std::string direction, std::string image1Filename, std::string image2Filename, std::string outimageFilename)
 {
