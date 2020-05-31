@@ -1,3 +1,28 @@
+/**
+ * \class ImageFile
+ *
+ * \brief ImageFile base abstract class.
+ *
+ * The class, that all images in application must extend.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
+
+/**
+ * \struct Pixel
+ *
+ * \brief Class, representing image pixel.
+ *
+ * Base class for all types of pixels.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
 #ifndef __IMAGE_FILE_H
 #define __IMAGE_FILE_H
 
@@ -12,108 +37,170 @@ struct Pixel
     virtual Pixel* clone() const = 0;
 };
 
-// using ImageFileTransformation = void (ImageFile::*)();
-// typedef void (ImageFile::*Transformation)();
-
+/**
+ * @param TRANSFORMATIONS map, used as dictionary for image transformations supported.
+ * @param filename name of the file, containing image.
+ * @param type type of the image format.
+ * @param pixels vector, used to store image pixels.
+ * @param width image width.
+ * @param height image height. 
+ */
 class ImageFile
 {
 protected:
-    // typedef void (ImageFile::*Transformation)();
     typedef void (ImageFile::*Transformation)();
     static const std::map<std::string, Transformation> TRANSFORMATIONS;
 
     std::string filename;
-    std::string type; // consider enum type
+    std::string type;
     std::vector<Pixel*> pixels;
     unsigned int width;
     unsigned int height;
 
+    /**
+     * Setter for pixels parameters.
+     * 
+     * @param _pixels pixels to set.
+     */
     void setPixels(const std::vector<Pixel*>& _pixels);
+
 public:
     ImageFile(const std::string& _filename, const std::string& _type) : filename(_filename), type(_type), width(0), height(0) {};
 
+    /**
+     * Loads image file content.
+     */
     virtual void open() = 0;
+
+    /**
+     * Writes image file content to file. 
+     */
     virtual void write() = 0;
+
+    /**
+     * Performs grayscale transformation. 
+     */
     virtual void grayscale() = 0;
+
+    /**
+     * Performs monochrome transformation. 
+     */
     virtual void monochrome() = 0;
+
+    /**
+     * Performs negative transformation. 
+     */
     virtual void negative() = 0;
+
+    /**
+     * Performs redscale transformation. 
+     */
     virtual void redscale() = 0;
+
+    /**
+     * Performs greenscale transformation. 
+     */
     virtual void greenscale() = 0;
+
+    /**
+     * Performs bluescale transformation. 
+     */
     virtual void bluescale() = 0;
 
+    /**
+     * Performs transformation, given as string.
+     * 
+     * @param transformation transformation name string
+     */
     void executeTransformation(const std::string& transformation);
 
+    /**
+     * Returns image type string.
+     * 
+     * @return image type string.
+     */
     virtual std::string getType() const = 0;
+
+    /**
+     * Clone method, returning pointer to base class throught derived class.
+     * 
+     * @return pointer to base class throught derived class.
+     */
     virtual ImageFile* clone() const = 0;
 
+    /**
+     * Makes collage from two images, horizontally or vertically. Both images
+     * must be from same dimensions.
+     * 
+     * @return pointer to new collage image file
+     */
     static ImageFile* collage(std::string direction, std::string image1Filename, std::string image2Filename, std::string outimageFilename);
 
-    Pixel* getPixel(unsigned int i, unsigned int j)
-    {
-        return pixels[(j * width) + i];
-    }
+    /**
+     * Gets pixel on indexes (i, j)
+     * 
+     * @return pointer pixel at (i, j)
+     */
+    Pixel* getPixel(unsigned int i, unsigned int j);
 
-    void setPixel(unsigned int i, unsigned int j, const Pixel* _pixel)
-    {
-        Pixel* pixel = this->getPixel(i, j);
-        pixel = _pixel->clone();
-    }
+    /**
+     * Sets pixel on indexes (i, j)
+     * 
+     * @param i rows index
+     * @param j colm index
+     * @param _pixel pixel to set
+     */
+    void setPixel(unsigned int i, unsigned int j, const Pixel* _pixel);
 
-    unsigned int getWidth() 
-    {
-        return width;
-    }
+    /**
+     * Image width getter 
+     * 
+     * @return image width
+     */
+    unsigned int getWidth();
 
-    unsigned int getHeight() 
-    {
-        return height;
-    }
+    /**
+     * Image height getter 
+     * 
+     * @return image height
+     */
+    unsigned int getHeight();
 
-    void setFilename(std::string newFilename)
-    {
-        this->filename = newFilename;
-    }
+    /**
+     * Image filename setter
+     * 
+     * @param newFilename new name.
+     */
+    void setFilename(std::string newFilename);
 
-    std::string getFilename()
-    {
-        return this->filename;
-    }
+    /**
+     * Image filename getter 
+     * 
+     * @return image file name
+     */
+    std::string getFilename();
 
-    virtual void print() 
-    {
-        std::cout << filename << std::endl;
-    }
+    /**
+     * Prints image info.
+     */
+    virtual void print();
 
-    void rotate(std::string direction)
-    {
-        std::vector<Pixel*> rotatedPixels(this->pixels.size());
-        for (unsigned int i = 0; i < height; ++i) 
-        {
-            for (unsigned int j = 0; j < width; ++j) 
-            {
-                if (direction == "right")
-                    rotatedPixels[j * height + (height - i - 1)] = pixels[i * width + j];
-                else if (direction == "left")
-                    rotatedPixels[j * height + (height - i - 1)] = pixels[(height - i - 1) * width + (width - j - 1)];
-            }
-        }
+    /**
+     * Rotates image 90 degress in direction given. Throws exception
+     * if direction not valid.
+     * 
+     * @param direction left or right
+     */
+    void rotate(std::string direction);
 
-        this->pixels = rotatedPixels;
-        
-        unsigned int tmp = this->height;
-        this->height = this->width;
-        this->width = tmp;
-    }
-
+    /**
+     * Checks if there is such image transformation
+     * 
+     * @return bool
+     */
     static bool isThereSuchTransformation(std::string transformation);
 
-    virtual ~ImageFile()
-    {
-        for (Pixel* pixel : pixels)
-        {
-            delete pixel;
-        }
-    };
+    virtual ~ImageFile();
 };
 
 

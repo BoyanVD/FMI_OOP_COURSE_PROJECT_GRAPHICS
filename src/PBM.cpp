@@ -54,15 +54,9 @@ bool PBM::openTextType()
     }
 
     file.close();
-    return true; // Think of better work-around
+    return true;
 }
 
-// @TODO - think of either fixing the format expected or reading them dynamically
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
 bool PBM::openBinaryType()
 {
     std::ifstream file(this->filename, std::ios::binary);
@@ -95,7 +89,7 @@ bool PBM::openBinaryType()
     {
         PixelPBM* pixel = new PixelPBM();
 
-        pixel->isBlack = pointer[i]; // - '0'
+        pixel->isBlack = pointer[i];
 
         this->pixels.push_back(pixel);
     }
@@ -150,7 +144,7 @@ bool PBM::writeBinary()
     {
         PixelPBM* pixel = dynamic_cast<PixelPBM*>(this->pixels[i]);
 
-        pointer[i] = pixel->isBlack; // + '0'
+        pointer[i] = pixel->isBlack;
     }
     out.write(pointer, size);
 

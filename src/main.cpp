@@ -7,6 +7,18 @@
 #include "ImageFileFactory.h"
 #include "ImageFile.h"
 
+/**
+ * \mainpage Project Description
+ * 
+ * \section Idea
+ *  This is a project, that implements readactor for Netpbm image files management. There are some transformations,
+ * that can be applied to the images in that format like grayscale, monochrome, negative, bluescale, greenscale, redscale
+ * and rotate. You can also make collage from two images. When you load one or more images, a new session automatically starts.
+ * Of course you can switch sessions and perform every functionality no matter in which session you are currently in.
+ * 
+ * \section Github
+ * https://github.com/BoyanVD/FMI_OOP_COURSE_PROJECT_GRAPHICS
+ */
 int main()
 {
     //------------------------------------------------------------------------------DEMO_1------------------------------------------

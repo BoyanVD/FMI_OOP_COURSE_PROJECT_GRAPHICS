@@ -10,7 +10,11 @@
 
 #include <fstream>
 
-// Find the file type from the signature. Must implement constructor only by field filename for Image File.
+const char* InvalidImageFileSignatureException::what() const noexcept
+{
+    return this->message.c_str();
+}
+
 ImageFile* ImageFileFactory::generate(const std::string& filepath)
 {
     std::ifstream file(filepath, std::ios::binary);
@@ -22,12 +26,10 @@ ImageFile* ImageFileFactory::generate(const std::string& filepath)
 
     std::string magicNumber;
     file >> magicNumber;
-    // std::cout << magicNumber << "----------------------------" << std::endl;
 
     file.close();
 
     ImageFile* item = nullptr;
-
     if (magicNumber == PPM_FILE_SIGNATURE_TEXT)
         item = new PPM(filepath, "text");
     else if (magicNumber == PPM_FILE_SIGNATURE_BINARY)
@@ -40,6 +42,9 @@ ImageFile* ImageFileFactory::generate(const std::string& filepath)
         item = new PBM(filepath, "text");
     else if (magicNumber == PBM_FILE_SIGNATURE_BINARY)
         item = new PBM(filepath, "binary");
+    
+    if (item == nullptr)
+        throw InvalidImageFileSignatureException("Ivanlid file signature for file " + filepath + " !");
     
     return item;
 }

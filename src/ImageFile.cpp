@@ -14,6 +14,14 @@ const std::map<std::string, ImageFile::Transformation> ImageFile::TRANSFORMATION
     {"bluescale", &ImageFile::bluescale}
 };
 
+ImageFile::~ImageFile()
+{
+    for (Pixel* pixel : pixels)
+    {
+        delete pixel;
+    }
+}
+
 bool ImageFile::isThereSuchTransformation(std::string transformation)
 {
     std::map<std::string, ImageFile::Transformation>::const_iterator it = TRANSFORMATIONS.find(transformation);
@@ -36,7 +44,7 @@ ImageFile* ImageFile::collage(std::string direction, std::string image1Filename,
     image1->open();
     image2->open();
 
-    if (image1->width != image2->width || image1->height != image2->height) // dimension can be different depending on direction
+    if (image1->width != image2->width || image1->height != image2->height)
         throw std::invalid_argument("Images must be from the same dimensions !");
 
     unsigned int collageHeight;
@@ -54,8 +62,6 @@ ImageFile* ImageFile::collage(std::string direction, std::string image1Filename,
     }
 
     std::vector<Pixel*> newPixels(image1->pixels.size() + image2->pixels.size());
-    // std::cout << collageWidth << " " << collageHeight << std::endl;
-    // std::cout << newPixels.size() << std::endl;
 
     for (unsigned int i = 0; i < collageHeight; ++i) 
     {
@@ -104,6 +110,66 @@ void ImageFile::executeTransformation(const std::string& transformation)
 
     Transformation function = it->second;
     (this->*function)();
+}
+
+Pixel* ImageFile::getPixel(unsigned int i, unsigned int j)
+{
+    return pixels[(j * width) + i];
+}
+
+void ImageFile::setPixel(unsigned int i, unsigned int j, const Pixel* _pixel)
+{
+    Pixel* pixel = this->getPixel(i, j);
+    pixel = _pixel->clone();
+}
+
+unsigned int ImageFile::getWidth() 
+{
+    return width;
+}
+
+unsigned int ImageFile::getHeight() 
+{
+    return height;
+}
+
+void ImageFile::setFilename(std::string newFilename)
+{
+    this->filename = newFilename;
+}
+
+std::string ImageFile::getFilename()
+{
+    return this->filename;
+}
+
+void ImageFile::print() 
+{
+    std::cout << filename << std::endl;
+}
+
+void ImageFile::rotate(std::string direction)
+{
+    if (direction != "right" && direction != "left")
+        throw std::invalid_argument("Direction must be left or right !");
+
+    std::vector<Pixel*> rotatedPixels(this->pixels.size());
+    for (unsigned int i = 0; i < height; ++i) 
+    {
+        for (unsigned int j = 0; j < width; ++j) 
+        {
+            if (direction == "right")
+                rotatedPixels[j * height + (height - i - 1)] = pixels[i * width + j];
+            else if (direction == "left")
+                rotatedPixels[j * height + (height - i - 1)] = pixels[(height - i - 1) * width + (width - j - 1)];
+        }
+    }
+
+    this->pixels = rotatedPixels;
+        
+    unsigned int tmp = this->height;
+    this->height = this->width;
+    this->width = tmp;
 }
 
 #endif

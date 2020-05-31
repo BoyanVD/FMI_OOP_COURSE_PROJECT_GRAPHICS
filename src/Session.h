@@ -1,3 +1,29 @@
+/**
+ * \class Session
+ *
+ * \brief Application session class.
+ *
+ * Class, used to represent the Application sessions. Stores all the
+ * session related functionality.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
+
+/**
+ * \struct SessionItem
+ *
+ * \brief Nested struct, used to wrap the intems, stored in session.
+ *
+ * Keeps pair of image and transformations, to be performed on image.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
 #ifndef __SESSION_H
 #define __SESSION_H
 
@@ -8,158 +34,108 @@
 #include "Command.h"
 #include "ImageFileFactory.h"
 
+/**
+ * @param sessionId session identificator parameter
+ * @param sessionItems stores all items, loaded in session.
+ */
 class Session
 {
 private:
     struct SessionItem
     {
-        // Think of smart pointers
         ImageFile* image;
         std::vector<std::string> imageTransformations;
 
         SessionItem(const ImageFile* img, const std::vector<std::string>& transformations) :
         image(img->clone()), imageTransformations(transformations) {}
 
-        ~SessionItem()
-        {
-            delete image;
-        }
+        ~SessionItem();
 
-        void executeAll()
-        {
-            for (std::string transformation : imageTransformations)
-            {
-                // std::cout << transformation << std::endl;
-                image->executeTransformation(transformation);
-            }
+        void executeAll();
 
-            imageTransformations.clear();
-        }
-
-        void print() const
-        {
-            std::cout << "Image : " << image->getFilename() << std::endl;
-            std::cout << "Transformations to be done on image : " << std::endl;
-            for (std::string transformation : imageTransformations)
-            {
-                std::cout << transformation << std::endl;
-            }
-        }
+        void print() const;
     };
 
     unsigned sessionId;
-    // std::vector<ImageFile*> sessionItems;
-    // std::vector<Command> sessionCommands;
     std::vector<SessionItem*> sessionItems;
 public:
     Session(unsigned _sessionId) : sessionId(_sessionId) {};
 
-    void addItem(ImageFile* item)
-    {
-        // this->sessionItems.push_back(item);
-        // SessionItem sessionItem(item, {});
+    /**
+     * Adds new item to session. Note that the Session becomes
+     * owner of the pointer through SessionItem constructor.
+     * 
+     * @param item pointer to image to add
+     */
+    void addItem(ImageFile* item);
 
-        this->sessionItems.push_back(new SessionItem(item, {}));
-    }
+    /**
+     * Adds new transformation to all session items loaded.
+     * 
+     * @param command user input command.
+     */
+    void addTransformation(const Command& command);
 
-    void addTransformation(const Command& command)
-    {
-        // this->sessionCommands.push_back(command);
-        for (SessionItem* item : sessionItems)
-        {
-            item->imageTransformations.push_back(command.getCommand());
-        }
-    }
+    /**
+     * Session id getter
+     * 
+     * @return session's id
+     */
+    unsigned getId();
 
-    unsigned getId()
-    {
-        return this->sessionId;
-    }
+    /**
+     * Removes the last transformation from all session items.
+     */
+    void undo();
 
-    void undo() // 
-    {
-        for (SessionItem* item : sessionItems)
-        {
-            item->imageTransformations.pop_back();
-        }
-    }
+    /**
+     * Saves all session items to their initial files. Note that it doesn't
+     * remove them from session after saving them.
+     */
+    void save();
 
-    void save()
-    {
-        for (SessionItem* item : sessionItems)
-        {
-            item->image->write();
-        }
-    }
+    /**
+     * Saves the first session item in file given, all other items are
+     * saved in their initial files. Please note that after saveas the first item
+     * stays the same for the session.
+     * 
+     * @param newName first item new name.
+     */
+    void saveas(const std::string& newName);
 
-    void saveas(const std::string& newName)
-    {
-        if (this->sessionItems.size() == 0)
-        {
-            std::cout << "There are no session items !" << std::endl;
-            return;
-        }
+    /**
+     * Performs all transformation to images in session. Please 
+     * note thet after executing transformation, the session items are
+     * cleared.
+     */
+    void executeAllTransformations();
 
-        std::string oldName = this->sessionItems[0]->image->getFilename();
-        this->sessionItems[0]->image->setFilename(newName);
+    /**
+     * Needed for <algorithm> sort function.
+     */
+    bool operator < (Session other);
 
-        this->save();
+    /**
+     * Prints info about session
+     */
+    void print();
 
-        this->sessionItems[0]->image = ImageFileFactory::generate(oldName);
-        this->sessionItems[0]->image->open();
-    }
+    /**
+     * Checks if there is session item with name given.
+     * 
+     * @param filename name of file to look for
+     * @return bool
+     */
+    bool contains(const std::string filename);
 
-    // void changeFirstItemName(const std::string& newName)
-    // {
-    //     if (this->sessionItems.size() == 0)
-    //     {
-    //         std::cout << "There are no session items !" << std::endl;
-    //         return;
-    //     }
-    //     this->sessionItems[0].image->setFilename(newName);
-    // }
+    /**
+     * Rotates all session items 90 degree in direction given
+     * 
+     * @param direction
+     */
+    void rotate(const std::string& direction);
 
-    void executeAllTransformations()
-    {
-        for (SessionItem* item : sessionItems)
-        {
-            item->executeAll();
-        }
-    }
-
-    bool operator < (Session other) // needed for <algorithm> sort function
-    {
-        return this->sessionId < other.sessionId;
-    }
-
-    void print()
-    {
-        std::cout << "Session ID : " << sessionId << std::endl;
-
-        for (SessionItem* item : sessionItems)
-        {
-            item->print();
-        }
-    }
-
-    bool contains(const std::string filename)
-    {
-        for (SessionItem* item : sessionItems)
-        {
-            if (item->image->getFilename() == filename)
-                return true;
-        }
-
-        return false;
-    }
-
-    ~Session()
-    {
-        for(SessionItem* item : this->sessionItems)
-        {
-            delete item;
-        }
-    }
+    ~Session();
 };
 
 #endif

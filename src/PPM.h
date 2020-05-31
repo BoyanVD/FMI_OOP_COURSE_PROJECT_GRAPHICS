@@ -1,3 +1,30 @@
+/**
+ * \class PPM
+ *
+ * \brief PPM images files class
+ *
+ * Class, representing the PPM image files format. All public methods
+ * overrides the base class methods.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
+
+/**
+ * \struct PixelPPM
+ *
+ * \brief PPM files pixels struct
+ *
+ * Used to represent the pixels of PPM files format. Extends the
+ * Pixel base struct.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
 #ifndef __PPM_H
 #define __PPM_H
 
@@ -7,6 +34,11 @@
 
 #include "ImageFile.h"
 
+/**
+ * @param red pixel red value
+ * @param green pixel green value
+ * @param blue pixel blue value
+ */
 struct PixelPPM : public Pixel
 {
     unsigned char red;
@@ -20,11 +52,21 @@ struct PixelPPM : public Pixel
         return new PixelPPM(*this);
     }
 
+    /**
+     * Checks if pixel is gray
+     * 
+     * @return bool
+     */
     bool isGray() const
     {
         return ((red == green) && (green == blue));
     }
 
+    /**
+     * Checks if pixel is monochrome
+     * 
+     * @return bool
+     */
     bool isMonochrome(unsigned int colorRange) const
     {
         return (red == 0 && green == 0 && blue == 0) || (red == colorRange && green == colorRange && blue == colorRange);
@@ -36,16 +78,48 @@ class PPM : public ImageFile
 private:
     unsigned int colorRange;
 
+    /**
+     * Opens PPM ASCII file format
+     * 
+     * @return bool, representing the success
+     */
     bool openTextType();
+
+    /**
+     * Opens PPM binary file format
+     * 
+     * @return bool, representing the success
+     */
     bool openBinaryType();
 
+    /**
+     * Writes in PPM ASCII file format
+     * 
+     * @return bool, representing the success
+     */
     bool writeBinary();
+
+    /**
+     * Writes to PPM ASCII file format
+     * 
+     * @return bool, representing the success
+     */
     bool writeText();
 
+    /**
+     * Checks if all image pixels are in grayscale already
+     * 
+     * @return bool
+     */
     bool isGrayscale() const;
+
+    /**
+     * Checks if all image pixels are monochrome already
+     * 
+     * @return bool
+     */
     bool isMonochrome() const;
 
-    // float meanGreyscaleValue() const;
 public:
     PPM() : ImageFile("", ""), colorRange(255) {};
     PPM(const std::string& _filepath, const std::string& _type) : ImageFile(_filepath, _type), colorRange(255) {};

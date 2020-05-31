@@ -55,7 +55,7 @@ bool PGM::openTextType()
     }
 
     file.close();
-    return true; // Think of better work-around
+    return true;
 }
 
 bool PGM::openBinaryType()

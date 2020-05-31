@@ -13,11 +13,20 @@ const std::map<std::string, Application::Function> Application::SUPPORTED_FUNCTI
     {"session_info", &Application::sessionInfo},
     {"switch", &Application::switchSession},
     {"collage", &Application::collage},
+    {"rotate", &Application::rotate},
     {"image_transformation", &Application::imageTransformation},
     {"save", &Application::save},
     {"saveas", &Application::saveas},
     {"undo", &Application::undo}
 };
+
+Application::~Application()
+{
+    for (Session* session : this->sessions)
+    {
+        delete session;
+    }
+}
 
 Application::Function Application::getFunction(const std::string key)
 {
@@ -60,27 +69,23 @@ void Application::printSessions()
 
 void Application::load(const Command& command)
 {
-    if (currentSession != nullptr)
-    {
-        this->logStream << "You already have session loaded ! If you want to start new one, please use 'switch' command." << std::endl;
-        return;
-    }
-
     unsigned sessionId = generateUniqueId();
     Session* session = new Session(sessionId);
 
     size_t numberOfParameters = command.getNumberOfParameters();
     for (int index = 0; index < numberOfParameters; ++index)
     {
-        ImageFile* item = ImageFileFactory::generate(command.getParameter(index));
-        if (item == nullptr)
+        ImageFile* item = nullptr;
+        try
         {
-            this->logStream << "Invalid filepath for command : " << command.getCommand() << std::endl;
-            this->logStream << "For filepath : " << (index + 1) << std::endl;
-
+            item = ImageFileFactory::generate(command.getParameter(index));
+        }
+        catch(const InvalidImageFileSignatureException& e)
+        {
+            std::cerr << e.what() << std::endl;
             continue;
         }
-
+        
         item->open();
         session->addItem(item);
     }
@@ -234,6 +239,24 @@ void Application::collage(const Command& command)
     }
 }
 
+void Application::rotate(const Command& command)
+{
+    if (this->currentSession == nullptr)
+    {
+        this->logStream << "There is currently no active session !" << std::endl;
+        return;
+    }
+
+    if (command.getNumberOfParameters() != 1)
+    {
+        this->logStream << "Rotate command expects exactly 1 parameter !" << std::endl;
+        return;
+    }
+
+    std::string direction = command.getParameter(0);
+    this->currentSession->rotate(direction);
+}
+
 void Application::save(const Command& command)
 {
     if (this->currentSession == nullptr)
@@ -275,7 +298,7 @@ void Application::saveas(const Command& command)
 void Application::run()
 {
     this->logStream << "Welcome to Netbpm image files management system !" << std::endl;
-    this->logStream << "Important note : the application works with files, that doesn't contain comment line ! If your files contain such line, please remove them !" << std::endl;
+    this->logStream << "Important note : the application works with files, that doesn't contain comment line ! If your files contain such line, please remove it !" << std::endl;
     this->logStream << std::endl;
 
     std::string input;

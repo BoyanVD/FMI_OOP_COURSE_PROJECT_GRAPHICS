@@ -1,3 +1,16 @@
+/**
+ * \class Command
+ *
+ * \brief Class, representing user input.
+ *
+ * Command class is used to parse and wrap user input in
+ * format expected by Application.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
 #ifndef __COMMAND_H
 #define __COMMAND_H
 
@@ -5,44 +18,52 @@
 #include <vector>
 #include <string>
 
+/**
+ * @param command stores the name of the command
+ * @param parameters stores parsed parameters.
+ */
 class Command
 {
 private:
     std::string command;
     std::vector<std::string> parameters;
 
+    /**
+     * Parses string and sets class fields.
+     * 
+     * @param input user input string.
+     */
     void parseInput(std::string input);
-public:
-    Command(std::string input)
-    {
-        parseInput(input);
-    }
 
+public:
+    Command(std::string input);
     Command(const Command &other);
 
-    std::string getCommand() const
-    {
-        return this->command;
-    }
+    /**
+     * Gets command name.
+     * 
+     * @return command name.
+     */
+    std::string getCommand() const;
 
-    std::string getParameter(unsigned index) const
-    {
-        return this->parameters[index];
-    }
+    /**
+     * Gets parameter at index given.
+     * 
+     * @return parameter at index
+     */
+    std::string getParameter(unsigned index) const;
 
-    size_t getNumberOfParameters() const
-    {
-        return this->parameters.size();
-    }
+    /**
+     * Gets the number of command parameters.
+     * 
+     * @return number of command parameters
+     */
+    size_t getNumberOfParameters() const;
 
-    void print()
-    {
-        std::cout << "  Command name : " << command << std::endl;
-        for (std::string param : parameters)
-        {
-            std::cout << "  Parameter : " << param << std::endl;
-        }
-    }
+    /**
+     * Prints command.
+     */
+    void print();
 };
 
 #endif

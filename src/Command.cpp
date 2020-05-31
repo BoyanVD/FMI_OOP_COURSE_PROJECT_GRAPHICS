@@ -4,6 +4,11 @@
 #include "Command.h"
 #include "Constants.h"
 
+Command::Command(std::string input)
+{
+    parseInput(input);
+}
+
 Command::Command(const Command &other)
 {
     this->command = other.command;
@@ -16,25 +21,8 @@ Command::Command(const Command &other)
 
 void Command::parseInput(std::string input)
 {
-    // size_t position = 0;
-    // std::string current;
-    // unsigned currentStringNumber = 0;
-
-    // while ((position = input.find(INPUT_COMMAND_DELIMETER)) != std::string::npos) {
-    //     current = input.substr(0, position);
-    //     input.erase(0, position + INPUT_COMMAND_DELIMETER.length());
-        
-    //     if (currentStringNumber == 0)
-    //         this->command = current;
-    //     else 
-    //         this->parameters.push_back(current);
-        
-    //     ++currentStringNumber;
-    // }
-
-
-
-    size_t current, previous = 0;
+    size_t current = 0;
+    size_t previous = 0;
     current = input.find(INPUT_COMMAND_DELIMETER);
     unsigned numberOfParsedStrings = 0;
 
@@ -54,8 +42,32 @@ void Command::parseInput(std::string input)
 
     if (numberOfParsedStrings == 0)
             this->command = input.substr(previous, current - previous);
-        else 
-            this->parameters.push_back(input.substr(previous, current - previous));
+    else 
+        this->parameters.push_back(input.substr(previous, current - previous));
+}
+
+std::string Command::getCommand() const
+{
+    return this->command;
+}
+
+std::string Command::getParameter(unsigned index) const
+{
+    return this->parameters[index];
+}
+
+size_t Command::getNumberOfParameters() const
+{
+    return this->parameters.size();
+}
+
+void Command::print()
+{
+    std::cout << "  Command name : " << command << std::endl;
+    for (std::string param : parameters)
+    {
+        std::cout << "  Parameter : " << param << std::endl;
+    }
 }
 
 #endif

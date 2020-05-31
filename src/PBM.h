@@ -1,3 +1,30 @@
+/**
+ * \class PBM
+ *
+ * \brief PBM images files class
+ *
+ * Class, representing the PBM image files format. All public methods
+ * overrides the base class methods.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
+
+/**
+ * \struct PixelPBM
+ *
+ * \brief PBM files pixels struct
+ *
+ * Used to represent the pixels of PBM files format. Extends the
+ * Pixel base struct.
+ *
+ * \author $Author: Boyan Dafov $
+ * 
+ * Contact: boyandafov123@gmail.com
+ *
+ */
 #ifndef __PBM_H
 #define __PBM_H
 
@@ -7,6 +34,9 @@
 
 #include "ImageFile.h"
 
+/**
+ * @param isBlack the only filed for the struct, showing if the pixel is black.
+ */
 struct PixelPBM : public Pixel
 {
     unsigned char isBlack; // using unsigned char instead of bool for less memory
@@ -22,10 +52,32 @@ struct PixelPBM : public Pixel
 class PBM : public ImageFile
 {
 private:
+    /**
+     * Opens PBM ASCII file format
+     * 
+     * @return bool, representing the success
+     */
     bool openTextType();
+
+    /**
+     * Opens PBM binary file format
+     * 
+     * @return bool, representing the success
+     */
     bool openBinaryType();
 
+    /**
+     * Writes in PBM ASCII file format
+     * 
+     * @return bool, representing the success
+     */
     bool writeBinary();
+
+    /**
+     * Writes to PBM ASCII file format
+     * 
+     * @return bool, representing the success
+     */
     bool writeText();
 public:
     PBM() : ImageFile("", "") {};
@@ -43,7 +95,7 @@ public:
 
     std::string getType() const override;
 
-    virtual ImageFile* clone() const
+    virtual ImageFile* clone() const override
     {
         return new PBM(*this);
     }

@@ -62,7 +62,7 @@ bool PPM::openTextType()
     }
 
     file.close();
-    return true; // Think of better work-around
+    return true;
 }
 
 bool PPM::openBinaryType()
@@ -238,7 +238,7 @@ void PPM::monochrome()
     {
         PixelPPM* pixelPPM = dynamic_cast<PixelPPM*>(pixel);
 
-        float monochromeValue = (pixelPPM->red + pixelPPM->green + pixelPPM->blue) / 3; // Logic may not be like that
+        float monochromeValue = (pixelPPM->red + pixelPPM->green + pixelPPM->blue) / 3;
         pixelPPM->red = monochromeValue;
         pixelPPM->green = monochromeValue;
         pixelPPM->blue = monochromeValue;
